@@ -1,3 +1,8 @@
+let nextAction = undefined
+let userName = null
+let country = null
+let grandKeyWord = null
+receiveMessage('Hallo, apa kabar?')
 function sendMessage(){
     let message = document.querySelector('#message-box').value;
     let messageWrapper = document.createElement('div')
@@ -23,24 +28,50 @@ function receiveMessage(message){
 }
 
 let keywordObj = {
-    'greeting': [/\bhello\b/i, /\bhi\b/i, /\bhi there\b/i],
-    'health': [/\bhow are you\b/i, /\bhow is it going\b/i, /\bhow are things\b/i]
+    'greeting': [/\bhallo,? apa kabar\b/i, /\bhallo\b/i, /\bapa kabar\b/i, /\bdan anda\b/i],
+    'name': [/\bSiapa nama anda\b/i, /\bdan anda\b/i, /\bsiapa namanya\b/i],
+    'greetres': [/\bbaik\b/i, /\bbaik,? terima kasih\b/i],
+    'country':[/\banda dari mana\b/i, /\bdan anda dari mana\b/i, /\bdan anda\b/i]
 }
 
 let responsesObj = {
-    'greeting':[
-        'Hi there',
-        'Hello',
-        'Howdy'
-    ],
-    'health': [
-        'I\'m fine! You?',
-        'Pretty good, thanks!',
-        'I have no complaints'
-    ]
+    'greeting':{
+        responses:
+        ['Baik', 'Baik, terima kasih'],
+        followups: [
+            'Siapa nama anda?',
+            'Siapa Namanya?'
+        ],
+        action: detectName
+    },
+    'name': {
+        responses: [
+        'Nama saya Ida.',
+        'Ida',
+        'Kenalkan, nama saya Ida',
+        'Saya Ida.'
+        ],
+        followups: [
+            'Anda berasal dari mana?',
+            `${userName} berasal dari mana?`
+        ],
+        action: detecCountry
+    },
+    'greetres': {
+        responses: [
+            'Siapa nama anda?',
+            'Siapa Namanya?'
+        ],
+        followups: undefined,
+        action: detectName
+    },
+    'country':{
+        responses:['Saya dari Indonesia.', 'Indonesia.']
+    }
 }
 
 function testKeyword(keyword){
+
     for (let key of Object.keys(keywordObj)){
         for (let myVal of keywordObj[key]){
             if (myVal.test(keyword)){
@@ -52,10 +83,20 @@ function testKeyword(keyword){
 }
 
 function convEngine(message){
+    if (nextAction != undefined){
+        nextAction(message)
+        return
+    }
     let keyword = testKeyword(message)
     if (keyword){
-        let res = pick(responsesObj[keyword])
+        let res = pick(responsesObj[keyword].responses)
         receiveMessage(res)
+        if (responsesObj[keyword].followups != undefined){
+            receiveMessage(pick(responsesObj[keyword].followups))
+        }
+        if (responsesObj[keyword].action != undefined){
+            nextAction = responsesObj[keyword].action
+        }
     }
     else{
         receiveMessage("I don't know what to say.")
@@ -72,4 +113,16 @@ function send(e){
         e.preventDefault()
         sendMessage()
     }
+}
+
+function detectName(phrase){
+    nextAction = undefined
+    let reg = /(kenalkan,? nama\s| saya\s | nama saya\s)?(\w+)/i
+    userName = phrase.match(reg)[2]
+    receiveMessage('Nice to meet you, ' + userName + '!')
+}
+function detecCountry(phrase){
+    nextAction = undefined
+    let reg = /(saya berasal dari\s| saya dari\s)?(\w+)/i
+    country = phrase.match(reg)[2]
 }
