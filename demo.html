@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.7.0.slim.min.js" integrity="sha256-tG5mcZUtJsZvyKAxYLVXrmjKBVLd6VpVccqz/r4ypFE=" crossorigin="anonymous" defer></script>
+    <script src="demo.js" defer></script>
+    <link rel="stylesheet" href="demo.css"/>
+    <title>Demo for SDS</title>
+</head>
+<body>
+  <div id="chat-space">
+  </div>
+  <div id="type-space">
+
+                <textarea id="message-box" placeholder="Enter your message here." onkeydown="send(event)"></textarea>
+
+                <button id="btnSubmit" class="jumbo-button" onclick="sendMessage()">Send</button>
+
+  </div>
+</body>
+</html>
