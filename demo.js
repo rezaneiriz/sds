@@ -71,7 +71,12 @@ let responsesObj = {
 }
 
 function testKeyword(keyword){
-
+    if (userName != null){
+        delete keywordObj['greeting']
+    }
+    if (country != null){
+        delete keywordObj['name']
+    }
     for (let key of Object.keys(keywordObj)){
         for (let myVal of keywordObj[key]){
             if (myVal.test(keyword)){
